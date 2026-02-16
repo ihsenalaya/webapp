@@ -9,6 +9,13 @@ If Azure Web App shows only the default Azure page, the app files are usually no
 - `web.config`: sets `index.html` as default document and rewrites SPA routes to `index.html`.
 - `server.js` + `package.json`: starts a static SPA server for Linux App Service Node runtime.
 
+## Security hardening included
+
+- Security headers (CSP, HSTS, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy).
+- Method restriction to `GET`, `HEAD`, `OPTIONS` on `server.js`.
+- Cache policy: `index.html` is `no-store`, hashed static assets are cached with `immutable`.
+- Frontend bundle patch: MSAL cache changed from LocalStorage to SessionStorage and token preview logging removed.
+
 ## Deploy checklist
 
 1. Deploy files at the root of `wwwroot` (not inside a subfolder like `dist/`).
