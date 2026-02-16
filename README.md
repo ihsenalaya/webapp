@@ -7,11 +7,16 @@ If Azure Web App shows only the default Azure page, the app files are usually no
 ## Files added for Azure App Service (Windows/IIS)
 
 - `web.config`: sets `index.html` as default document and rewrites SPA routes to `index.html`.
+- `server.js` + `package.json`: starts a static SPA server for Linux App Service Node runtime.
 
 ## Deploy checklist
 
 1. Deploy files at the root of `wwwroot` (not inside a subfolder like `dist/`).
 2. Confirm `index.html` exists in `/site/wwwroot`.
-3. If your Web App is **Linux + Node**, set Startup Command:
-   - `pm2 serve /home/site/wwwroot --no-daemon --spa`
-4. Restart the Web App after deployment.
+3. If your Web App is **Linux + Node**, set Runtime Stack to Node 20 LTS.
+4. For Linux, either:
+   - leave Startup Command empty and let Azure run `npm start`, or
+   - set Startup Command explicitly to `node server.js`.
+5. If you prefer PM2 instead of `server.js`, use:
+   - `pm2 serve /home/site/wwwroot --no-daemon --spa --port 8080`
+6. Restart the Web App after deployment.

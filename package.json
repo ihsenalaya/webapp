@@ -1,0 +1,12 @@
+{
+  "name": "azure-spa-static-host",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static SPA host for Azure App Service Linux",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
