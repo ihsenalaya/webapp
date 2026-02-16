@@ -27,3 +27,12 @@ If Azure Web App shows only the default Azure page, the app files are usually no
 5. If you prefer PM2 instead of `server.js`, use:
    - `pm2 serve /home/site/wwwroot --no-daemon --spa --port 8080`
 6. Restart the Web App after deployment.
+
+## Azure AD redirect URI checklist
+
+If you get `AADSTS50011`, add exact redirect URIs in Microsoft Entra ID App Registration:
+
+- `https://<your-app>.azurewebsites.net/`
+- `https://<your-app>.azurewebsites.net/login`
+
+If you use custom domains or slots, add each exact domain/URL as well.
