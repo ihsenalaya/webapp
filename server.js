@@ -50,6 +50,23 @@ function writeTextResponse(res, statusCode, body) {
   res.end(body);
 }
 
+function writeJsonResponse(req, res, statusCode, payload) {
+  const body = JSON.stringify(payload, null, 2);
+
+  writeCommonHeaders(res);
+  res.setHeader("Cache-Control", "no-store");
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.setHeader("Content-Length", Buffer.byteLength(body));
+  res.writeHead(statusCode);
+
+  if (req.method === "HEAD") {
+    res.end();
+    return;
+  }
+
+  res.end(body);
+}
+
 function getCacheControl(filePath) {
   const baseName = path.basename(filePath);
 
@@ -118,6 +135,47 @@ function isInsideRoot(targetPath) {
   return rel === "" || (!rel.startsWith("..") && !path.isAbsolute(rel));
 }
 
+function getDiagnosticPayload(req) {
+  const allFiles = fs.readdirSync(ROOT_DIR);
+  const files = allFiles
+    .filter(name => {
+      try {
+        return fs.statSync(path.join(ROOT_DIR, name)).isFile();
+      } catch {
+        return false;
+      }
+    })
+    .sort();
+
+  const coreAssets = [
+    "index.html",
+    "main-GIC5GNNZ.js",
+    "polyfills-5CFQRCPP.js",
+    "scripts-TTWY4XDY.js",
+    "styles-LWOR4GRJ.css",
+    "bootstrap-diagnostic.js"
+  ];
+
+  return {
+    generatedAt: new Date().toISOString(),
+    rootDir: ROOT_DIR,
+    nodeVersion: process.version,
+    request: {
+      method: req.method,
+      host: req.headers.host || null,
+      url: req.url || null
+    },
+    deployedFiles: files,
+    assetsPresence: coreAssets.reduce((acc, fileName) => {
+      acc[fileName] = fs.existsSync(path.join(ROOT_DIR, fileName));
+      return acc;
+    }, {}),
+    securityHeaders: {
+      contentSecurityPolicy: SECURITY_HEADERS["Content-Security-Policy"]
+    }
+  };
+}
+
 const server = http.createServer((req, res) => {
   if (!ALLOWED_METHODS.has(req.method)) {
     res.setHeader("Allow", "GET, HEAD, OPTIONS");
@@ -146,6 +204,18 @@ const server = http.createServer((req, res) => {
     rawPath = decodeURIComponent(url.pathname);
   } catch {
     writeTextResponse(res, 400, "Bad Request");
+    return;
+  }
+
+  if (rawPath === "/__status") {
+    try {
+      writeJsonResponse(req, res, 200, getDiagnosticPayload(req));
+    } catch (err) {
+      writeJsonResponse(req, res, 500, {
+        error: "Failed to build diagnostic payload",
+        message: err instanceof Error ? err.message : "Unknown error"
+      });
+    }
     return;
   }
 
