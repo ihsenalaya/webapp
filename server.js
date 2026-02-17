@@ -30,7 +30,7 @@ const MIME_TYPES = {
 
 const SECURITY_HEADERS = {
   "Content-Security-Policy":
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com; frame-src 'self' https://login.microsoftonline.com; form-action 'self' https://login.microsoftonline.com",
+    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; connect-src 'self' https://login.microsoftonline.com https://graph.microsoft.com https://*.microsoftonline.com; frame-src 'self' https://login.microsoftonline.com https://*.microsoftonline.com; form-action 'self' https://login.microsoftonline.com https://*.microsoftonline.com",
   "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
   "Referrer-Policy": "no-referrer",
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
