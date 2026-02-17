@@ -149,7 +149,7 @@ function getDiagnosticPayload(req) {
 
   const coreAssets = [
     "index.html",
-    "main-GIC5GNNZ.js",
+    "main-GIC5GNNY.js",
     "polyfills-5CFQRCPP.js",
     "scripts-TTWY4XDY.js",
     "styles-LWOR4GRJ.css",
