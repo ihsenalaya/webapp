@@ -97,7 +97,9 @@ function sendFile(req, res, filePath, stat) {
 
 function getSafeAbsolutePath(requestPath) {
   const normalized = path.normalize(requestPath);
-  return path.join(ROOT_DIR, normalized);
+  // Always resolve from ROOT_DIR, even when requestPath starts with "/".
+  const relativePath = normalized.replace(/^[/\\]+/, "");
+  return path.resolve(ROOT_DIR, relativePath);
 }
 
 function statOrNull(filePath, callback) {
